@@ -52,3 +52,76 @@ SELECT * FROM department;
 SELECT * FROM role;
 SELECT * FROM employee;
 
+-- SELECT 
+--     employee.id,
+--     employee.first_name,
+--     employee.last_name,
+--     Title,
+--     Department,
+--     Salary,
+--     employee.manager_id
+-- FROM
+--     employee
+--         LEFT JOIN
+--     (SELECT 
+--         role.title AS Title,
+-- 		department.name AS Department,
+-- 		role.salary As Salary
+--     FROM
+--         role
+--     LEFT JOIN Department ON role.Department_id = Department.id) AS new_role
+--     
+--     ON employee.role_id = new_role.id;
+-- 	LEFT JOIN new_role ON employee.role_id = role.id;
+--     LEFT JOIN new_role ON 
+    
+SELECT 
+    employee.id AS ID,
+    employee.first_name AS "First Name",
+    employee.last_name AS "Last Name",
+    role.title AS Title,
+    department.name AS Department,
+    role.salary AS Salary,
+    CONCAT(manager.first_name, " ", manager.last_name) AS Manager
+FROM employee 
+LEFT JOIN role ON employee.role_id = role.id
+LEFT JOIN department ON role.department_id = department.id
+LEFT JOIN employee manager ON manager.id = employee.manager_id
+
+SELECT * FROM 
+(SELECT 
+    employee.id AS ID,
+    employee.first_name AS "First Name",
+    employee.last_name AS "Last Name",
+    role.title AS Title,
+    department.name AS Department,
+    role.salary AS Salary,
+    CONCAT(manager.first_name, " ", manager.last_name) AS Manager
+FROM employee 
+LEFT JOIN role ON employee.role_id = role.id
+LEFT JOIN department ON role.department_id = department.id
+LEFT JOIN employee manager ON manager.id = employee.manager_id) AS employee_combined
+WHERE Manager = "John Doe";
+-- WHERE Department = "Engineering"
+
+-- SELECT 
+-- 	role.title,
+-- 	department.name,
+-- 	role.salary
+-- FROM
+-- 	role
+-- LEFT JOIN Department ON role.Department_id = Department.id
+-- SELECT 
+-- 	employee.id,
+-- 	employee.first_name,
+-- 	employee.last_name,
+--     role.title,
+--     manager_id
+-- FROM
+--     employee
+-- LEFT JOIN
+-- 	role
+-- ON employee.role_id = role.id
+
+-- LEFT JOIN
+
