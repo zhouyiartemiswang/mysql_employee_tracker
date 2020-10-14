@@ -1,3 +1,4 @@
+const util = require("util");
 const mysql = require("mysql");
 
 const connection = mysql.createConnection({
@@ -8,10 +9,7 @@ const connection = mysql.createConnection({
     database: "employee_db"
 });
 
-connection.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected as id " + connection.threadId);
-    // init();
-});
+connection.connect();
+connection.query = util.promisify(connection.query);
 
 module.exports = connection;

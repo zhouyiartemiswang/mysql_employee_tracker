@@ -1,5 +1,5 @@
 {
-    "name": "mysql_employee_traker",
+    "name": "mysql_employee_tracker",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -8,15 +8,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/zhouyiartemiswang/mysql_employee_traker.git"
+        "url": "git+https://github.com/zhouyiartemiswang/mysql_employee_tracker.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/zhouyiartemiswang/mysql_employee_traker/issues"
+        "url": "https://github.com/zhouyiartemiswang/mysql_employee_tracker/issues"
     },
-    "homepage": "https://github.com/zhouyiartemiswang/mysql_employee_traker#readme",
+    "homepage": "https://github.com/zhouyiartemiswang/mysql_employee_tracker#readme",
     "dependencies": {
         "console.table": "^0.10.0",
         "inquirer": "^7.3.3",
