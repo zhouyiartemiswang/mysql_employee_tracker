@@ -100,6 +100,7 @@ async function init() {
 
 }
 
+// Display all employees including id, first and last name, title, department, salary and manager
 async function viewAllEmployees() {
 
     const data = await db.displayAllEmployees();
@@ -109,9 +110,13 @@ async function viewAllEmployees() {
 
 }
 
+// Display all employees in a user-selected department
 async function viewEmployeesByDepartment() {
 
+    // Find names of all departments
     const data = await db.findAllDepartments();
+
+    // Generate a list of all departments to use in prompt
     const answers = await inquirer.prompt([
         {
             type: "list",
@@ -121,14 +126,18 @@ async function viewEmployeesByDepartment() {
         }
     ]);
 
+    // Based on user selection, find all employees from selected department and display
     const employees = await db.displayEmployeeByDepartment(answers);
     console.log("\n");
     console.table(employees);
+
     init();
 }
 
+// Display all employees under a user-selected manager
 async function viewEmployeesByManager() {
 
+    // Generate manager list from employee list to use in prompt
     const data = await db.displayAllEmployees();
     const answers = await inquirer.prompt([
         {
@@ -139,6 +148,7 @@ async function viewEmployeesByManager() {
         }
     ]);
 
+    // Based on user selection, find all employees from selected manager and display
     const employees = await db.displayEmployeeByManager(answers);
     console.log("\n");
     console.table(employees);
@@ -147,8 +157,10 @@ async function viewEmployeesByManager() {
 
 }
 
+// Display all roles
 async function viewAllRoles() {
 
+    // Get all roles from role table
     const data = await db.displayAllRoles();
     console.log("\n");
     console.table(data);
@@ -156,8 +168,10 @@ async function viewAllRoles() {
     init();
 }
 
+// Display all departments
 async function viewAllDepartments() {
 
+    // Get all departments from department table
     const data = await db.findAllDepartments();
     console.log("\n");
     console.table(data);
@@ -166,8 +180,10 @@ async function viewAllDepartments() {
 
 }
 
+// Display budget of a user-selected department 
 async function viewBudget() {
 
+    // Get all department names to use in prompt
     const data = await db.findAllDepartments();
     const answers = await inquirer.prompt([
         {
@@ -178,7 +194,10 @@ async function viewBudget() {
         }
     ]);
 
+    // Get id of the department user selected
     const departmentId = await db.getDepartmentId(answers);
+    
+    // Get budget of that department 
     const budget = await db.getDepartmentBudget(departmentId);
     console.log(`\nThe budget for ${answers.department} department is $${budget[0].dept_budget}.\n`);
 
@@ -186,6 +205,7 @@ async function viewBudget() {
 
 }
 
+// Add an employee
 async function addEmployee() {
 
     const answers = await inquirer.prompt([
@@ -200,12 +220,13 @@ async function addEmployee() {
             name: "lastName"
         }
     ]);
-
-    let employeeInfo = [];
+    
+    let employeeInfo = []; // Initiate an empty array to hold new employee's info
+    // Add employee's first and last name into employeeInfo array
     employeeInfo.push(answers.firstName, answers.lastName);
 
+    // Get all department names to use in prompt
     const data = await db.findAllDepartments();
-
     const answers2 = await inquirer.prompt([
         {
             type: "list",
@@ -215,7 +236,10 @@ async function addEmployee() {
         }
     ]);
 
+    // Get id of the department selected by user
     const departmentId = await db.getDepartmentId(answers2);
+
+    // Get all roles in that department and generate a list to use in prompt
     const roleTitle = await db.getRoleTitleFromDeptId(departmentId);
     const answers3 = await inquirer.prompt([
         {
@@ -226,11 +250,19 @@ async function addEmployee() {
         }
     ]);
 
+    // Get id of role selected by user
     const roleId = await db.getRoleId(answers3);
+
+    // Add role id into employeeInfo array
     employeeInfo.push(roleId[0].id);
+
+    // Get managers from employee table
     const manager = await db.getManagerName();
 
+    // Generate manager list to use in prompt
     let managerList = generateList(manager, "manager2");
+
+    // Add choice "None" to indicate no manager
     managerList.push("None");
     const answers4 = await inquirer.prompt([
         {
@@ -241,23 +273,32 @@ async function addEmployee() {
         }
     ]);
 
+    // Get id of manager selected by user
     const managerId = await db.getEmployeeId(answers4);
 
+    // If user selected "None", add "null" to manager_id column
     if (answers4.manager === "None") {
         employeeInfo.push(null);
-    } else {
+    } 
+    // Otherwise add manager id to manager_id column
+    else {
         employeeInfo.push(managerId[0].id);
     }
 
+    // Add employee with all info in employeeInfo array
     await db.addEmployee(employeeInfo);
 
     console.log(`\n${employeeInfo[0]} ${employeeInfo[1]} is added to employee list.`);
+
+    // Display all employee to show newly added employee
     viewAllEmployees();
 
 }
 
+// Add a role
 async function addRole() {
 
+    // Get all departments to use in prompt
     const data = await db.findAllDepartments();
     const answers = await inquirer.prompt([
         {
@@ -278,18 +319,24 @@ async function addRole() {
         }
     ]);
 
+    // Get id of department selected by user
     const departmentId = await db.getDepartmentId(answers);
-    console.log(departmentId);
 
+    // Assign role title, salary, and department id to roleInfo
     let roleInfo = [answers.role, answers.salary, departmentId[0].ID];
+    
+    // Add role to role table
     await db.addRole(roleInfo);
-
     console.log(`\n${answers.role} is added to the list.`);
+    
+    // Display all role to show newly added role
     viewAllRoles();
 
 }
 
+// Add a department 
 async function addDepartment() {
+
     const answers = await inquirer.prompt([
         {
             type: "input",
@@ -298,16 +345,22 @@ async function addDepartment() {
         }
     ]);
 
+    // Add a department to department table 
     await db.addDepartment(answers);
 
     console.log(`\n${answers.department} is added to the list.`);
+
+    // Display all department to show newly added department 
     viewAllDepartments();
 
 }
 
+// Remove employee, role or department 
 async function remove(keyword) {
 
     let choiceList = [];
+
+    // Generate list based on parameter passed in
     if (keyword === "employee") {
 
         const data = await db.getEmployeeName();
@@ -338,6 +391,7 @@ async function remove(keyword) {
         }
     ]);
 
+    // Remove employee, role or department 
     if (keyword === "employee") {
 
         const data2 = await db.removeEmployee(answers);
@@ -360,12 +414,20 @@ async function remove(keyword) {
 
 }
 
+// Update employee role or manager
 async function updateEmployee(keyword) {
+
+    // Get names of employees
     const data = await db.getEmployeeName();
+
+    // Get roles of employees
     const data2 = await db.getRoleTitle();
+
+    // Generate list of employees and roles
     let employeeList = generateList(data, "employee");
     let choiceList = generateList(data2, "role");
 
+    // If updating manager, then choiceList will be employeeList
     if (keyword === "manager") {
         choiceList = employeeList;
     }
@@ -385,6 +447,7 @@ async function updateEmployee(keyword) {
         }
     ]);
 
+    // Update role or manager
     if (keyword === "role") {
 
         const roleId = await db.getRoleId(answers);
@@ -400,30 +463,44 @@ async function updateEmployee(keyword) {
     }
 
     console.log(`\n${answers.employee}'s ${keyword} is updated.`);
+    
+    // Display all employees to show updates
     viewAllEmployees();
 
 }
 
+// Function input: data, type (string)
+// Function output: list to be used in prompt
 function generateList(data, type) {
+
     let list = [];
     data.forEach(function (dataEl) {
         if (type === "department") {
             list.push(dataEl.Department);
+
         } else if (type === "manager1") {
+
             if (!list.includes(dataEl.Manager) && dataEl.Manager != null) {
                 list.push(dataEl.Manager);
             }
+
         } else if (type === "manager2") {
             list.push(dataEl.manager);
+
         } else if (type === "role") {
             list.push(dataEl.title);
+
         } else if (type === "employee") {
             list.push(dataEl.employee_name);
+
         }
     });
+    
     return list;
+    
 }
 
+// Quit the application
 function quit() {
     console.log("Bye!");
     process.exit();
