@@ -194,11 +194,8 @@ async function viewBudget() {
         }
     ]);
 
-    // Get id of the department user selected
-    const departmentId = await db.getDepartmentId(answers);
-    
     // Get budget of that department 
-    const budget = await db.getDepartmentBudget(departmentId);
+    const budget = await db.getDepartmentBudget(answers);
     console.log(`\nThe budget for ${answers.department} department is $${budget[0].dept_budget}.\n`);
 
     init();

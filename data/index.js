@@ -32,9 +32,9 @@ function getDepartmentId(answers) {
     return connection.query("SELECT ID FROM department WHERE department.name = ?", answers.department);
 }
 
-// Calculate department budget given department id 
-function getDepartmentBudget(departmentId) {
-    return connection.query("SELECT SUM(salary) AS dept_budget FROM role WHERE department_id = ?", departmentId[0].ID);
+// Calculate department budget given department name
+function getDepartmentBudget(answers) {
+    return connection.query(`SELECT SUM(Salary) AS dept_budget FROM (${viewCommand}) AS new_table WHERE Department = ?`, answers.department);
 }
 
 // Get all role titles
