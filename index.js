@@ -4,6 +4,7 @@ const db = require("./data");
 
 init();
 
+// Start to ask user questions and direct to specific functions
 async function init() {
 
     const answers = await inquirer.prompt([
@@ -90,8 +91,9 @@ async function init() {
             break;
 
         case "Quit":
-            console.log("Bye!");
-            connection.end();
+            quit();
+            break;
+
         default:
             break;
     }
@@ -420,4 +422,9 @@ function generateList(data, type) {
         }
     });
     return list;
+}
+
+function quit() {
+    console.log("Bye!");
+    process.exit();
 }
